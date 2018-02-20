@@ -17,3 +17,7 @@ In order to use the code:
 * **compressed_states.txt:** if **compression_flag = true**, this contains the compressed representation of state space (i.e. only the observed states are assigned labels). Else, this will be identical to states.txt
 * **mapping.txt:** contains the map between integer and compressed representation of the state space
 * **time_series.txt:** spin lattice as a function of time. This file can get very large so set **output_spins = false** for large sims
+
+
+#### DON'T FORGET TO LINK EI.CPP!
+
