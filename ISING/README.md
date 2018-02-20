@@ -1,0 +1,2 @@
+## ISING
+This directory contains files related to the core Ising Algorithm, which is a Monte Carlo Simulation with a Metropolis Update. The output from these files focuses on visualizing the spin lattice itself as it evolves through time, while the subdirectory BINDER_CUMULANT benchmarks the core algorithm used in these codes. Due to the large amount of memory required to store the spin lattice (N^2*N_steps Bytes), directories outside of ISING do not save it as output. Instead, they focus on other output such as Transition Probability Matrices (../MONTE_CARLO).

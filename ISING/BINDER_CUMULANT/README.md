@@ -1,0 +1,3 @@
+Bare bones code used to ensure the core update algorithm is operating correctly. The test is whether the Binder Cumulant can correctly identify the 2d critical temperature. When running properly, the binder cumulant should be invariant as a function of lattice size near the critical temperature. Thus, plotting the binder cumulant as a function of lattice size and temperature should show a crossing near the theoretical 2d critical temperature.
+ 
+Ref: K. Binder 1981, 2001
