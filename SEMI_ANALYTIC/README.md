@@ -1,5 +1,5 @@
-# MONTE CARLO
-This directory uses the core algorithm from **../ISING** (with a few small changes) in order to calculate a Transition Probability Matrix (TPM) and the Effective Information of a given model
+# SEMI-ANALYTIC
+This directory contains codes that calculate the Transition Probability Matrix (TPM) and Effective Information (EI) of an Ising Model without actually simulating a Monte Carlo walk through state space. Instead, this code analytically calculates transition probabilities using the energy difference between states and the Metropolis Update Rule.
 
 ## Download and Run
 In order to use the code:
@@ -12,13 +12,8 @@ In order to use the code:
 
 
 ## Output
-* **params.txt:** contains simulation parameters such as lattice size and number of steps
-* **states.txt:** contains the binary state of the spin lattice as a function of time 
-* **compressed_states.txt:** if **compression_flag = true**, this contains the compressed representation of state space (i.e. only the observed states are assigned labels). Else, this will be identical to states.txt
-* **mapping.txt:** contains the map between integer and compressed representation of the state space
-* **time_series.txt:** spin lattice as a function of time. This file can get very large so set **output_spins = false** for large sims
-* **TPM_file.txt:** contains the TPM resulting from the Monte Carlo Simulation if **TPM_flag = true**
-* **EI_file.txt:** if **TPM_flag = true**, file contains EI as a function of step number
+* **TPM_file.txt:** contains the TPM resulting from the semi-analytical calculations
+* **EI_file.txt:** contains EI and model parameters
 
 #### DON'T FORGET TO LINK EI.CPP!
 
