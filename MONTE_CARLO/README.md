@@ -1,5 +1,5 @@
 # MONTE CARLO
-This directory uses the core algorithm from ISING (with a few small changes) in order to calculate a Transition Probability Matrix (TPM) and the Effective Information of a given model
+This directory uses the core algorithm from **../ISING** (with a few small changes) in order to calculate a Transition Probability Matrix (TPM) and the Effective Information of a given model
 
 ## Download and Run
 In order to use the code:
