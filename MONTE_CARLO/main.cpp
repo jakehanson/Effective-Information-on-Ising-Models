@@ -14,6 +14,8 @@ int main(int argc, char** argv)
 	long N_sims = 100; // Number of times to reinitialize and run a simulation
 	bool output_spins = false; // flag to output spin matrix at each time step
 	bool compression_flag = false; // flag to compress statespace into minimal rep rather than binary
+	bool TPM_flag = true; // true means output TPM to file
+	bool EI_flag = true; // true means output EI to file
 
 	std::map<unsigned long long,unsigned long long> compression_map; // map storing minimal representation of state space
 	std::vector<unsigned long long> state_array; // holds the state trajectory
@@ -42,20 +44,22 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	std::cout << "Starting...\n";
-
 	/* Store parameters in file */
 	std::ofstream params("params.txt");
 	params << "n_rows\tn_cols\tTemperature\tSteps\t\n";
 	params << n_rows << "\t" << n_cols << "\t" << T << "\t" << N_steps<< "\n";
 	params.close();
 
-
 	/* Initialize and run simulations */
 	std::ofstream states("states.txt");
 	std::ofstream compressed_states("compressed_states.txt");
 	std::ofstream time_series("time_series.txt");
+	std::ofstream EI_file("EI_file.txt");
+	if(EI_flag){
+		EI_file << "Total Steps" << "\t" << "Size of State Space" << "\t" << "Effective Info" << "\t" << "Size of TPM [GB]" << std::endl;
+	}
 
+	std::cout << "Starting...\n";
 	std::cout << "N_rows:\t" << n_rows << std::endl;
 	std::cout << "N_cols:\t" << n_cols << std::endl;
 	std::cout << "T:\t" << T << std::endl;
@@ -88,7 +92,7 @@ int main(int argc, char** argv)
 			}
 		}
 
-		/* Get TPM from the state trajectory */
+		// Get TPM from the state trajectory
 		if(compression_flag == true){
 			TPM = get_TPM(state_array,compression_map.size(),N_steps);
 		}else{
@@ -125,13 +129,13 @@ int main(int argc, char** argv)
 		}
 
 
-		/* Get Intervention Distribution (assuming ID=H_max)*/
+		// Create Intervention Distribution (assuming ID=H_max)
 		std::vector<double> ID(TPM.size(), 0.0);
 		for(int i=0;i<TPM.size();i++){
 			ID[i] = 1./TPM.size(); // append 1/n for each value of ID
 		}
 
-		/* Get Effect Distribution ED=ID*TPM */
+		// Get Effect Distribution ED=ID*TPM
 		std::vector<double> ED(TPM.size(), 0.0);
 		for(int i=0;i<TPM.size();i++){
 			double sum = 0;
@@ -141,16 +145,17 @@ int main(int argc, char** argv)
 			ED[i] = sum;
 		}
 
-		/* Calculate Effective Info (Hoel, 2017)*/
+		// Calculate Effective Info (Hoel, 2017)
 		double EI = get_EI(ID,ED,TPM);
-		//std::cout << "\tEFFECTIVE INFO:\t" << EI << std::endl;
-		//std::cout << "\tSize of compressed state space: " << compression_map.size() << std::endl;
 		std::cout << (n+1)*N_steps << "\t" << compression_map.size() << "\t" << EI << "\t" << TPM_size << std::endl;
+		if(EI_flag){
+			EI_file << (n+1)*N_steps << "\t" << compression_map.size() << "\t" << EI << "\t" << TPM_size << std::endl;
+		}
 	
 	}
 
 	/* Write Uncompressed TPM to file for comparison with semi-analytical code */
-	if(compression_flag == false){
+	if(compression_flag == false and TPM_flag == true){
 		std::ofstream TPM_file("TPM_file.txt");
 		TPM_file << "Rows = " << n_rows << std::endl;
 		TPM_file << "Cols = " << n_cols << std::endl;
@@ -158,9 +163,12 @@ int main(int argc, char** argv)
 		TPM_file << "TPM:" << std::endl;
 		for(int i=0;i<N_states;i++){
 			for(int j=0;j<N_states;j++){
-				TPM_file << TPM[i][j] << "\t";
+				if(j != N_states-1){
+					TPM_file << TPM[i][j] << "\t";	
+				}else{
+					TPM_file << TPM[i][j] << "\n";
+				}
 			}
-			TPM_file << std::endl; // end line
 		}
 		TPM_file.close();
 	}
@@ -169,6 +177,7 @@ int main(int argc, char** argv)
 	states.close();
 	compressed_states.close();
 	time_series.close();
+	EI_file.close();
 
 	/* Write compression map to file */
 	std::ofstream mapping("mapping.txt");

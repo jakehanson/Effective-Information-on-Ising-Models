@@ -10,7 +10,7 @@
 std::tuple<int, int, int, int> get_nn(int index,int n_rows,int n_cols);
 
 /* Function to calculate transition probability using metropolis hastings */
-void update_TPM(long int N_states, double T, long int index1, long int index2, double diff, std::vector<std::vector<double>> &TPM);
+void update_TPM(long int N_states, int N_spins, double T, long int index1, long int index2, double diff, std::vector<std::vector<double>> &TPM);
 
 /* Function to calculate Effective Information (Hoel, 2017) */
 double get_EI(std::vector<double> ID,std::vector<double> ED,std::vector<std::vector<double>> TPM);

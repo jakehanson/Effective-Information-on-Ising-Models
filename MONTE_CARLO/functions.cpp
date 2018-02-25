@@ -74,6 +74,7 @@ void Ising_Model::evolve(std::ostream &time_series){
 		energy = -1*spin_matrix[row_index][col_index]*(left_nn+right_nn+down_nn+up_nn);
 		if(energy > 0){
 			spin_matrix[row_index][col_index] = -1*spin_matrix[row_index][col_index];
+
 		}else{
 			double r = real_dis(gen);
 			if(r <= std::exp(2.*double(energy)/temp)){

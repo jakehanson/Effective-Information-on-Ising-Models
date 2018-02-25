@@ -3,9 +3,8 @@
 // This code calculates pairwise energy between states sequentially
 // It does not randomly draw the next state
 // Monte Carlo Metropolis algorithm should converge to these TPMs
-// We can cut time by roughly half by only calculating upper diagonal for TPM
+// We could cut time by roughly half by only calculating upper diagonal for TPM
 
-// TPM looks way too dense
 
 /* Main */
 int main(int argc, char** argv)
@@ -55,13 +54,35 @@ int main(int argc, char** argv)
 			state2.flip(j); // flip a bit
 			// calculate energy difference
 			double diff = get_E(state2)-get_E(state1); // energy difference
-			update_TPM(N_states,T,i,state2.to_ulong(),diff,TPM); // store in matrix
-
-			// Write to file
-			TPM_file << TPM[i][state2.to_ulong()] << "\t";
+			update_TPM(N_states,N_spins,T,i,state2.to_ulong(),diff,TPM); // store in matrix
 		}
-		// End Line
-		TPM_file << std::endl;
+		// Calculate probability of transition out of state
+		double trans_prob = 0.;
+		for(long int f=0;f<N_states;f++){
+			trans_prob = trans_prob + TPM[i][f]; // sum transition probabilities
+		}
+		TPM[i][i] = 1.-trans_prob; // prob of staying in the same state
+	}
+
+	// Write TPM to file
+	for(long int i=0;i<N_states;i++){
+		double sum = 0.;
+		for(long int j=0;j<N_states;j++){
+			if(TPM[i][j] > 1 or TPM[i][j] < -1e-12){
+				std::cout << "ERROR INVALID TRANSITION PROBABILITY: " << TPM[i][j] << std::endl;
+			}else{
+				if(j != N_states - 1){
+					TPM_file << TPM[i][j] << "\t";
+				}else{
+					TPM_file << TPM[i][j] << "\n";
+				}
+				sum += TPM[i][j];
+			}
+		}
+		if(sum - 1.0 > 1e-10){
+			std::cout << "ERROR INVLALID TRANSITION PROBABILITY SUM: " << sum << std::endl;
+		}
+
 	}
 
 	// Create Intervention Distribution (assuming ID=H_max)
